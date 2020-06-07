@@ -72,12 +72,28 @@ def list_snapshots(project):
 def take_snapshots(project):
     "Create new Snapshots"
     
-    instances = filter_instances(project)    
+    instances = filter_instances(project)
+        
     for i in instances:
+        
+        print(f'Stopping {i.id}....')
+        
+        i.stop()
+        i.wait_until_stopped()
+        
         for v in i.volumes.all():
-            print(f'Creating Snapshot for {v.id}......')
+            print(f'   Creating Snapshot for {v.id}......')
             v.create_snapshot(Description="Created by Snapshotalyer 3000")
-
+            
+        print(f'Starting {i.id}...')
+        
+        i.start()
+        i.wait_until_running()
+        
+    print("Job's done!! ")
+    
+    return
+        
 @volumes.command('delete')  
 @click.option('--project', default=None,
         help="Only instances for project (tag Project:<name>)")  
