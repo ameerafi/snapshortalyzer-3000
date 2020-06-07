@@ -17,6 +17,10 @@ def filter_instances(project):
     
     return instances
 
+def has_pending_snapshot(volume):
+    snapshots = list(volumes.snapshots.all())
+    return snapshots and shanpshot[0].state == 'pending'
+
 @click.group()
 def cli():
     """shotty manages snapshots"""
@@ -87,6 +91,10 @@ def take_snapshots(project):
         i.wait_until_stopped()
         
         for v in i.volumes.all():
+            if has_pending_snapshot(v):
+                print(f'  Skipping {v.id}, snapshot already in progress..,')
+                continue
+            
             print(f'   Creating Snapshot for {v.id}......')
             v.create_snapshot(Description="Created by Snapshotalyer 3000")
             
