@@ -18,8 +18,8 @@ def filter_instances(project):
     return instances
 
 def has_pending_snapshot(volume):
-    snapshots = list(volumes.snapshots.all())
-    return snapshots and shanpshot[0].state == 'pending'
+    snapshots = list(volume.snapshots.all())
+    return snapshots and snapshots[0].state == 'pending'
 
 @click.group()
 def cli():
